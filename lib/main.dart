@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:inventarko/screens/main_content_scr.dart';
 import 'package:inventarko/utils/constants.dart';
+import 'package:inventarko/widgets/appheader.dart';
+import 'package:inventarko/widgets/verticalsidenavi_menu.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -31,8 +39,30 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  //declare variable 4 current index
+  var currIndex = 0; //default value is 0
   @override
   Widget build(BuildContext context) {
+    //TODO: odvali sebi šamarčinu kad se sjebeš da staviš currPage(), prosleđujem int ne fju bokte
+    Widget buildMainContents({required int currPage}) {
+      switch (currPage) {
+        //depending on value blabla switch case expression,clASSic
+        case 0:
+          return MainContent();
+        case 1:
+          //!:
+          return Container();
+        case 2:
+          return Container();
+        case 3:
+          return Container();
+        case 4:
+          return Container();
+        default:
+          return const MainContent();
+      }
+    }
+
     return Scaffold(
       //insteadof child, container is a body of our scaffold
       body: Container(
@@ -40,15 +70,34 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           children: [
             //header
-            AppHeader(), //widget I'm gonna make
-
+            AppHeader(),
+            //menu and content
             Expanded(
                 child: Row(
               children: [
-                VerticalSideNaviMenu(), //another widget I'm gonna make
+                VerticalSideNaviMenu(),
+                //Main area
                 Expanded(
-                    child: Column(
-                  children: [],
+                    child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: defaultSpace + 2, top: defaultSpace + 2),
+                  child: Column(
+                    children: [
+                      //here it will display main content/page
+                      Text("Products",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.copyWith(color: Colors.black38)),
+
+                      /*Text("Products"): Displays the string "Products".
+          Theme.of(context).textTheme.headlineLarge: Retrieves the default headlineLarge text style from the app's current theme.
+          copyWith(color: Colors.black38): Modifies (or "copies") the existing headlineLarge style to change the text color to Colors.black38. */
+
+                      //child is stf widget (stf= statefull not shut the f up)
+                      Expanded(child: buildMainContents(currPage: currIndex)),
+                    ],
+                  ),
                 )),
               ],
             ))
