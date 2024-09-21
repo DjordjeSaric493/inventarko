@@ -10,6 +10,6 @@ class MainContent extends StatefulWidget {
 class _MainContentState extends State<MainContent> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Container();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_icon_class/font_awesome_icon_class.dart';
 import 'package:inventarko/screens/main_content_scr.dart';
 import 'package:inventarko/utils/constants.dart';
 import 'package:inventarko/widgets/appheader.dart';
@@ -70,34 +71,57 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           children: [
             //header
-            AppHeader(),
+            const AppHeader(),
             //menu and content
             Expanded(
                 child: Row(
               children: [
-                VerticalSideNaviMenu(),
+                //check vertnavimenu widget,I'll send parameters
+                VerticalSideNaviMenu(
+                  onTap: (int index) {
+                    print(index); //print index of page idk
+                    setState(() {
+                      currIndex = index; //state to remember
+                    });
+                  },
+                  currentIndex: currIndex,
+                  //passing required params
+                  //list of navbarmenuitems (icons)
+                  menuItems: [
+                    NavBarMenuItem(icon: Icons.home),
+                    NavBarMenuItem(icon: Icons.shopping_cart),
+                    NavBarMenuItem(icon: FontAwesomeIcons.tags),
+                    NavBarMenuItem(icon: FontAwesomeIcons.objectGroup),
+                    NavBarMenuItem(icon: Icons.store),
+                  ],
+                  //size of every icon is 17
+                  iconSize: 17,
+                ),
                 //Main area
                 Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: defaultSpace + 2, top: defaultSpace + 2),
-                  child: Column(
-                    children: [
+                    child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: defaultSpace + 2, top: defaultSpace + 2),
+
                       //here it will display main content/page
-                      Text("Products",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineLarge
-                              ?.copyWith(color: Colors.black38)),
+                      child: Text(
+                        "Products",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineLarge
+                            ?.copyWith(color: Colors.black38),
+                      ),
 
                       /*Text("Products"): Displays the string "Products".
-          Theme.of(context).textTheme.headlineLarge: Retrieves the default headlineLarge text style from the app's current theme.
-          copyWith(color: Colors.black38): Modifies (or "copies") the existing headlineLarge style to change the text color to Colors.black38. */
+                                  Theme.of(context).textTheme.headlineLarge: Retrieves the default headlineLarge text style from the app's current theme.
+                                  copyWith(color: Colors.black38): Modifies (or "copies") the existing headlineLarge style to change the text color to Colors.black38. */
 
                       //child is stf widget (stf= statefull not shut the f up)
-                      Expanded(child: buildMainContents(currPage: currIndex)),
-                    ],
-                  ),
+                    ),
+                    Expanded(child: buildMainContents(currPage: currIndex))
+                  ],
                 )),
               ],
             ))
