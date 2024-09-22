@@ -14,9 +14,6 @@ class MainContent extends StatefulWidget {
 }
 
 class _MainContentState extends State<MainContent> {
-//state is potentially the most painful part of this
-
-//
   Iterable<TableRow>? productList;
   Iterable<TableRow>? filteredProductList;
 
@@ -24,14 +21,14 @@ class _MainContentState extends State<MainContent> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timestamp) {
-      productList = productInventoryList
-          .map((product) => _buildProductRowTile(context, product));
+      productList = productInventoryList.map((product) =>
+          _buildProductRowTile(context, product, product.productSku));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    //FE part
+    // FE part
     return Column(
       children: [
         Flexible(
@@ -58,7 +55,7 @@ class _MainContentState extends State<MainContent> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        //first container that contains everything in column
+                        // first container that contains everything in column
                         Container(
                           width: 400,
                           height: 40,
@@ -83,20 +80,19 @@ class _MainContentState extends State<MainContent> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextField(
                                   onChanged: (value) {},
-                                  style: TextStyle(fontSize: 12),
+                                  style: const TextStyle(fontSize: 12),
                                   decoration: const InputDecoration(
                                       border: InputBorder.none),
                                 ),
                               )),
-                              //lib/widgets/button.dart
+                              // lib/widgets/button.dart
                               ButtonWithIcon(
-                                  icon: FontAwesomeIcons
-                                      .arrowDown19, //can use Icons.keyboard_arrow_down too
-                                  //required params are label and onTap
+                                  icon: FontAwesomeIcons.arrowDown19,
+                                  // required params are label and onTap
                                   label: 'Filter',
                                   onTap: () {
                                     print("korisnik kliknuo filter");
-                                    //TODO: ovde će još da petljam
+                                    // TODO: ovde će još da petljam
                                   })
                             ],
                           ),
@@ -113,7 +109,7 @@ class _MainContentState extends State<MainContent> {
                                 onTap: () {
                                   print("odabrao opciju export");
                                 }),
-                            SizedBox(
+                            const SizedBox(
                               width: defaultSpace / 2,
                             ),
                             Container(
@@ -139,9 +135,9 @@ class _MainContentState extends State<MainContent> {
                       ],
                     ),
                   ),
-                  //put another table
+                  // put another table
                   Table(
-                    //map with indexes
+                    // map with indexes
                     columnWidths: const {
                       0: FixedColumnWidth(25),
                       1: FixedColumnWidth(70),
@@ -156,7 +152,7 @@ class _MainContentState extends State<MainContent> {
                       horizontalInside: BorderSide(
                           color: Colors.grey.withOpacity(.1), width: 1),
                     ),
-                    //table properties
+                    // table properties
                     children: [_buildProdHeader(), ...?productList],
                   )
                 ],
@@ -169,185 +165,157 @@ class _MainContentState extends State<MainContent> {
   }
 }
 
-TableRow _buildProdTile(ProductModel product) {
+TableRow _buildProductRowTile(
+    BuildContext context, ProductModel product, String productSKU) {
   return TableRow(
-    key: ValueKey(product.productName),
-    children: [
-      _buildProdItem(
+      key: ValueKey(product.productSku), // Use productSku as a unique key
+      children: [
+        _buildProdItem(
+            child: Checkbox(
+                side: const BorderSide(color: Colors.grey, width: 1),
+                focusColor: Colors.black45,
+                value: false,
+                onChanged: (value) {})),
+        _buildProdItem(
+            child: Image.network(
+          product.productPic,
+          width: 40,
+          errorBuilder: (context, err, _) {
+            return Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                    color: Colors.blueGrey, shape: BoxShape.rectangle));
+          },
+        )),
+        _buildProdItem(
           child: Padding(
-        padding: const EdgeInsets.all(defaultSpace / 2),
-        child: Checkbox(value: false, onChanged: (value) {}),
-      )),
-      _buildProdItem(
-        child: Image.network(product.productPic,
-            //in case we can't get pic from internet
-            errorBuilder: (context, error, _) {
-          return Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: Colors.blueGrey,
-              shape: BoxShape.rectangle,
-            ),
-          );
-        }),
-      ),
-    ],
-  );
-}
-
-//TODO:(DJORDJE): obrati pažnju na to da prosledjuješ kontekst da ne proklinjem opet dan kad sam rešio da se bavim ovim
-//pass context, if u know what u re doing, you'll figure out when Theme.of(context) gets as red as my face when I'm pissed off
-TableRow _buildProductRowTile(BuildContext context, ProductModel product) {
-  return TableRow(key: ValueKey(product.productPrice), children: [
-    _buildProdItem(
-        child: Checkbox(
-            side: const BorderSide(color: Colors.grey, width: 1),
-            focusColor: Colors.black45,
-            value: false,
-            onChanged: (value) {})),
-    _buildProdItem(
-        child: Image.network(
-      product.productPic,
-      width: 40,
-      errorBuilder: (context, err, _) {
-        return Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-                color: Colors.blueGrey, shape: BoxShape.rectangle));
-      },
-    )),
-    _buildProdItem(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          product.productName,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.black87.withOpacity(.7)),
-        ),
-      ),
-    ),
-    _buildProdItem(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          product.category.name.toUpperCase(),
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.black87.withOpacity(.7)),
-        ),
-      ),
-    ),
-    _buildProdItem(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          product.productSku,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: Colors.black87.withOpacity(.7)),
-        ),
-      ),
-    ),
-    //product variants, it's a bit different than others
-    //take a look on productmodel
-    _buildProdItem(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              //count no of variants (enums)
-              product.variantCount.toString(),
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              product.productName,
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
                   ?.copyWith(color: Colors.black87.withOpacity(.7)),
             ),
-            Row(
-              children: [
-                const Text("Varijante: "),
-                ...product.productVariants.map((variant) => Flexible(
-                        child: Text(
-                      '${variant.name},',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Colors.black87.withOpacity(.7)),
-                    )))
-              ],
-            )
-          ],
+          ),
         ),
-      ),
-    ),
-    _buildProdItem(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          '\$${product.productPrice.toString()}',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.black87.withOpacity(.7),
-              fontWeight: FontWeight.w900),
-        ),
-      ),
-    ),
-    _buildProdItem(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          height: 35,
-          width: 120,
-          decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: product.status.name == "active"
-                  ? Colors.green.withOpacity(.3)
-                  : Colors.red.withOpacity(.3),
-              borderRadius: BorderRadius.circular(50)),
-          child: Center(
+        _buildProdItem(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Text(
-              StockStatus(product.status),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 12,
-                  color: product.status.name == "active"
-                      ? Colors.green
-                      : Colors.red),
+              product.category.name.toUpperCase(),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.black87.withOpacity(.7)),
             ),
           ),
         ),
-      ),
-    ),
-    TableCell(
-        child: Container(
-      padding: const EdgeInsets.symmetric(vertical: defaultSpace + 6),
-      child: Center(
-        child: Container(
-          height: 25,
-          width: 25,
-          decoration: const BoxDecoration(
-              shape: BoxShape.rectangle, color: backgroundColor),
-          child: Icon(
-            Icons.more_horiz,
-            size: 17,
-            color: Colors.black.withOpacity(.5),
+        _buildProdItem(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              product.productSku,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.black87.withOpacity(.7)),
+            ),
           ),
         ),
-      ),
-    )),
-  ]);
+        // product variants, it's a bit different than others
+        _buildProdItem(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.variantCount.toString(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Colors.black87.withOpacity(.7)),
+                ),
+                Row(
+                  children: [
+                    const Text("Varijante: "),
+                    ...product.productVariants.map((variant) => Flexible(
+                            child: Text(
+                          '${variant.name},',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: Colors.black87.withOpacity(.7)),
+                        )))
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        _buildProdItem(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '\$${product.productPrice.toString()}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.black87.withOpacity(.7),
+                  fontWeight: FontWeight.w900),
+            ),
+          ),
+        ),
+        _buildProdItem(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 35,
+              width: 120,
+              decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: product.status.name == "active"
+                      ? Colors.green.withOpacity(.3)
+                      : Colors.red.withOpacity(.3),
+                  borderRadius: BorderRadius.circular(50)),
+              child: Center(
+                child: Text(
+                  StockStatus(product.status),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                      color: product.status.name == "active"
+                          ? Colors.green
+                          : Colors.red),
+                ),
+              ),
+            ),
+          ),
+        ),
+        TableCell(
+            child: Container(
+          padding: const EdgeInsets.symmetric(vertical: defaultSpace + 6),
+          child: Center(
+            child: Container(
+              height: 25,
+              width: 25,
+              decoration: const BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.all(Radius.circular(2))),
+              child: Icon(
+                FontAwesomeIcons.ellipsisVertical,
+                color: Colors.black.withOpacity(.5),
+              ),
+            ),
+          ),
+        )),
+      ]);
 }
 
 TableRow _buildProdHeader() {
   return TableRow(
     children: [
-      //one row with multiple
       _buildProdItem(
           child: Padding(
         padding: const EdgeInsets.all(defaultSpace / 2),
@@ -358,13 +326,11 @@ TableRow _buildProdHeader() {
           child: const Padding(
         padding: EdgeInsets.all(defaultSpace / 2),
         child: Text("Naziv proizvoda"),
-
-        ///product name
       )),
       _buildProdItem(
           child: const Padding(
         padding: EdgeInsets.all(defaultSpace / 2),
-        child: Text("Kategorija"), //product category
+        child: Text("Kategorija"),
       )),
       _buildProdItem(
           child: const Padding(
@@ -374,17 +340,17 @@ TableRow _buildProdHeader() {
       _buildProdItem(
           child: const Padding(
         padding: EdgeInsets.all(defaultSpace / 2),
-        child: Text("Varianta"), //variant
+        child: Text("Varianta"),
       )),
       _buildProdItem(
           child: const Padding(
         padding: EdgeInsets.all(defaultSpace / 2),
-        child: Text("Cena"), //product price
+        child: Text("Cena"),
       )),
       _buildProdItem(
           child: const Padding(
         padding: EdgeInsets.all(defaultSpace / 2),
-        child: Text("Status"), //status -check enums
+        child: Text("Status"),
       )),
       _buildProdItem(child: Container()),
     ],
@@ -394,8 +360,7 @@ TableRow _buildProdHeader() {
 TableCell _buildProdItem({required Widget child}) {
   return TableCell(
     verticalAlignment: TableCellVerticalAlignment.middle,
-    child: //ctrl+space and it'll create child since it's required
-        SizedBox(
+    child: SizedBox(
       height: 69,
       child: Center(
         child: child,
@@ -404,19 +369,12 @@ TableCell _buildProdItem({required Widget child}) {
   );
 }
 
-// Function to convert ProductStatus enum to a user-friendly string
 String StockStatus(ProdStatus status) {
-  // Check the status of the product
   switch (status) {
-    // If the product is out of stock, return the appropriate message
     case ProdStatus.outOfStock:
       return "Out of Stock";
-
-    // If the product is active, return the appropriate message
     case ProdStatus.active:
       return "Active";
-
-    // Default case to handle any other statuses in the future
     default:
       return "Unknown Status";
   }
