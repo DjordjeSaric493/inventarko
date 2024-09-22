@@ -94,12 +94,13 @@ class _MainPageState extends State<MainPage> {
                     NavBarMenuItem(icon: FontAwesomeIcons.objectGroup),
                     NavBarMenuItem(icon: Icons.store),
                   ],
-                  //size of every icon is 17
-                  iconSize: 17,
+                  //size of every icon is 22
+                  iconSize: 22,
                 ),
                 //Main area
                 Expanded(
                     child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(
@@ -107,7 +108,7 @@ class _MainPageState extends State<MainPage> {
 
                       //here it will display main content/page
                       child: Text(
-                        "Products",
+                        "Proizvodi",
                         style: Theme.of(context)
                             .textTheme
                             .headlineLarge

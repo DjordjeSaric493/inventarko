@@ -3,7 +3,7 @@
 
 enum ProdCategory { electronics, books, music, clothes }
 
-enum ProdVariant { color, size, material }
+enum ProdVariant { color, size, material, format, storage }
 
 enum ProdStatus { active, outOfStock }
 
